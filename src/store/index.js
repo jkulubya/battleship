@@ -1,3 +1,5 @@
+import FiringBoard from '../models/FiringBoard'
+import GameBoard from '../models/Gameboard'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import * as actions from './actions'
@@ -9,8 +11,8 @@ const store = new Vuex.Store({
     actions,
     mutations,
     state: {
-        firingBoard: {},
-        gameBoard: {},
+        firingBoard: new FiringBoard(),
+        gameBoard: new GameBoard(),
         currentPlayer: {}
     }
 })

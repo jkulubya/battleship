@@ -65,69 +65,76 @@
             </div>
         </div>
         <div class="panel">
-
+            <tile-component v-for="panel in panels" :panel="panel" :key="getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)"></tile-component>
         </div>
     </div>
 </template>
 
-<style scoped>
-    .wrapper {
-        display: flex;
-        flex-wrap: wrap;
-        background-color: #2891aa;
-        width: 525px;
-    }
-    .x-label {
-        background-color: #489271;
-        padding: 0 0 0 25px;
-        display: flex;
-        height: 25px;
-        width: 100%;
-    }
-    .x-label div {
-        width: 50px;
-    }
-    .x-label div p {
-        text-align: center;
-        font-size: 18px;
-        height: 25px;
-        line-height: 25px;
-    }
-    .y-label {
-        background-color: #292ae1;
-        width: 25px;
-    }
-    .y-label div {
-        height: 50px;
-    }
-    .y-label div p {
-        text-align: center;
-        font-size: 18px;
-        height: 50px;
-        line-height: 50px;
-    }
-    .panel {
-        background-color: #000000;
-        height: 50px;
-        width: 500px;
-        display: flex;
-        flex-wrap: wrap;
-    }
-    .panel div {
-        height: 50px;
-        width: 50px;
-        background-color: red;
-    }
-</style>
 <script>
     import tile from './Tile.vue'
+    
     export default {
-        name: 'tile-container',
+        name: 'tile-container-component',
         data () {
             return { }
         },
         components: {
-            'tile': tile
+            'tile-component': tile
+        },
+        computed: {
+            panels () {
+                return this.$store.state.firingBoard.Panels
+            }
         }
     }
 </script>
+
+<style lang='less' scoped>
+    .wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: #f0f0f0;
+        border: 1px solid #aaa;
+        width: 525px;
+    }
+    .x-label {
+        background-color: #292ae1;
+        padding: 0 0 0 25px;
+        display: flex;
+        height: 25px;
+        width: 100%;
+
+        div {
+            width: 50px;
+
+            p {
+                text-align: center;
+                font-size: 18px;
+                height: 25px;
+                line-height: 25px;
+            }
+        }
+    }
+
+    .y-label {
+        background-color: #292ae1;
+        width: 25px;
+
+        div {
+            height: 50px;
+
+            p {
+                text-align: center;
+                font-size: 18px;
+                height: 50px;
+                line-height: 50px;
+            }
+        }
+    }
+    
+    .panel {
+        width: 500px;
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>

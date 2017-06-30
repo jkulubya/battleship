@@ -1,9 +1,9 @@
-import Coordinates from './Coordinate.js'
+import Coordinates from './Coordinates.js'
 import OccupationType from './OccupationType.js'
 
 export default class Panel {
     constructor (x, y) {
-        this.Coordinates = Coordinates(x, y)
+        this.Coordinates = new Coordinates(x, y)
         this.OccupationType = OccupationType.EMPTY
     }
 
