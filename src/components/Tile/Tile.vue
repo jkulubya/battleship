@@ -28,7 +28,6 @@
         computed: {
             hit () {
                 let index = this.getPanelIndex(this.panel.Coordinates.x, this.panel.Coordinates.y)
-                console.log(index)
                 return this.$store.state.firingBoard.Panels[index].OccupationType === OccupationType.HIT
             },
 
@@ -50,11 +49,10 @@
         }
 
         &.hit {
-            background: greenyellow;
+            background: red;
         }
 
         &.miss {
-            background: red;
-        }
+            background: forestgreen;        }
     }
 </style>
