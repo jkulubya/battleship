@@ -41,11 +41,12 @@
 
 <style lang='less' scoped>
     .tile {
+        background: #4952FF;
         height: 50px;
         width: 50px;
 
         &:hover{
-            background: #e0e0e0;
+            background: #121540;
         }
 
         &.hit {
