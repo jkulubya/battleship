@@ -53,6 +53,7 @@
         }
 
         &.miss {
-            background: forestgreen;        }
+            background: forestgreen;
+        }
     }
 </style>
