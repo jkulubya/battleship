@@ -5,10 +5,14 @@ import router from './router'
 import store from './store'
 import Vue from 'vue'
 import mixins from './mixins'
+import socketio from 'socket.io-client'
+import VueSocketio from 'vue-socket.io'
 require('./assets/reset.css')
 
 Vue.config.productionTip = false
 Vue.mixin(mixins)
+
+Vue.use(VueSocketio, socketio('http://localhost:3000'), store)
 
 /* eslint-disable no-new */
 new Vue({
