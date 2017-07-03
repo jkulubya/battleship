@@ -1,5 +1,5 @@
 import FiringBoard from '../models/FiringBoard'
-import GameBoard from '../models/Gameboard'
+import GameBoard from '../models/GameBoard'
 import Vue from 'vue'
 import Vuex from 'vuex'
 import * as actions from './actions'
