@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import TileContainer from '@/components/Tile/TileContainer'
+// import AppContainer from '../AppContainer'
+import PlaceShips from '../PlaceShips'
 
 Vue.use(Router)
 
@@ -9,7 +10,7 @@ export default new Router({
         {
             path: '/',
             name: 'Home',
-            component: TileContainer
+            component: PlaceShips
         }
     ]
 })
