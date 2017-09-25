@@ -66,7 +66,12 @@
                 </div>
             </div>
             <div class="panel">
-                <div class="tile" v-for="panel in panels" :key="getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)">{{getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)}}</div>
+                <div class="tile"
+                    @click="tileClicked(getPanelIndex(panel.Coordinates.x, panel.Coordinates.y))"
+                    v-for="panel in panels"
+                    :key="getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)">
+                    {{getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)}}
+                </div>
             </div>
         </div>
         <div>
@@ -82,41 +87,153 @@
 </template>
 
 <script>
+import Vue from 'vue'
+
 export default {
     name: 'place-ships',
     data () {
         return {
-            selectedShip: 0
+            isCurrentlyPlacingShip: false,
+            shipStartPosition: Number(),
+            moveEndNodes: {
+                yminus: 0,
+                yplus: 0,
+                xminus: 0,
+                xplus: 0
+            },
+            selectedShip: 0,
+            shipPlacements: [[], [], [], [], []]
         }
     },
-    components: {},
     computed: {
         panels () {
             return this.$store.state.gameBoard.Panels
         }
     },
     methods: {
-        moveIsWithinBounds (index, shipSize = 2) {
-            let extraLength = shipSize - 1
-            let result = {
-                xplus: false,
-                xminus: false,
-                yplus: false,
-                yminus: false
+        tileClicked (index) {
+            let selectedShip = Number(this.selectedShip)
+            if (selectedShip === 0) return
+
+            if (!this.isCurrentlyPlacingShip) {
+                console.log('ping')
+                this.startShipPlacement(index, selectedShip)
+                this.isCurrentlyPlacingShip = true
+            } else {
+                console.log('pong')
+                this.finishShipPlacement(index, selectedShip)
+                this.isCurrentlyPlacingShip = false
             }
-            if ((index + (extraLength * 10) <= 99)) result.yplus = true
-            if ((index - (extraLength * 10) >= 0)) result.yminus = true
+        },
 
-            if ((Math.floor((index) / 10)) === (Math.floor((index + extraLength) / 10))) result.xplus = true
-            if ((Math.floor((index) / 10)) === (Math.floor((index - extraLength) / 10))) result.xminus = true
+        startShipPlacement (index, shipType) {
+            let validMoves = this.getValidMoves(index, shipType)
+            this.shipStartPosition = index
+            this.getMoveEndNodes(index, shipType, validMoves)
+            // visual feedback for user
+        },
 
+        finishShipPlacement (index, shipType) {
+            if (
+                index !== this.moveEndNodes.yminus &&
+                index !== this.moveEndNodes.yplus &&
+                index !== this.moveEndNodes.xminus &&
+                index !== this.moveEndNodes.xplus) return
+
+            let shipSize = this.getShipSize(shipType)
+            let shipSquares = []
+
+            if (index === this.moveEndNodes.yminus) {
+                for (let i = 0; i < shipSize; i++) {
+                    let item = index + (10 * i)
+                    shipSquares.push(item)
+                }
+            }
+
+            if (index === this.moveEndNodes.yplus) {
+                for (let i = 0; i < shipSize; i++) {
+                    let item = index - (10 * i)
+                    shipSquares.push(item)
+                }
+            }
+
+            if (index === this.moveEndNodes.xminus) {
+                for (let i = 0; i < shipSize; i++) {
+                    let item = index + i
+                    shipSquares.push(item)
+                }
+            }
+
+            if (index === this.moveEndNodes.xplus) {
+                for (let i = 0; i < shipSize; i++) {
+                    let item = index - i
+                    shipSquares.push(item)
+                }
+            }
+
+            // shipType-1 because ships start at 1 but arrays start at 0
+            Vue.set(this.shipPlacements, shipType - 1, shipSquares) // eslint-disable-line
+            // draw ships
+        },
+
+        getValidMoves (index, shipType) {
+            let shipSize = this.getShipSize(shipType)
+            let result = this.moveIsClearOfShips(index, shipSize, this.moveIsWithinBounds(index, shipSize))
             return result
         },
 
+        getMoveEndNodes (index, shipType, { yminus, yplus, xminus, xplus }) {
+            let shipSize = this.getShipSize(shipType)
+            let extraLength = shipSize - 1
+
+            if (yminus) {
+                let endNode = index - (10 * extraLength)
+                this.moveEndNodes.yminus = endNode
+            }
+            if (yplus) {
+                let endNode = index + (10 * extraLength)
+                this.moveEndNodes.yplus = endNode
+            }
+            if (xminus) {
+                let endNode = index - extraLength
+                this.moveEndNodes.xminus = endNode
+            }
+            if (xplus) {
+                let endNode = index + extraLength
+                this.moveEndNodes.xplus = endNode
+            }
+        },
+
+        getShipSize (shipType) {
+            let shipSize = 0
+            switch (shipType) {
+            case 1:
+                shipSize = 4
+                break
+            case 2:
+                shipSize = 3
+                break
+            case 3:
+                shipSize = 2
+                break
+            case 4:
+                shipSize = 3
+                break
+            case 5:
+                shipSize = 5
+                break
+            default:
+                break
+            }
+            return shipSize
+        },
+
         moveIsClearOfShips (index, shipSize, { yminus, yplus, xminus, xplus }) {
+            // check if ship being placed is ship currently occupying space
             if (yminus) {
                 for (let i = 0; i < shipSize; i++) {
                     let p = this.panels[index - (10 * i)].IsOccupied
+                    console.log('hi')
                     console.log(this.panels[i - (10 * i)])
                     if (p) yminus = false
                 }
@@ -141,38 +258,31 @@ export default {
             }
 
             return {
-                xplus,
-                xminus,
                 yminus,
-                yplus
+                yplus,
+                xminus,
+                xplus
             }
         },
 
-        getValidMoves (index, shipType) {
-            let shipSize = 0
-            switch (shipType) {
-            case 1:
-                shipSize = 4
-                break
-            case 2:
-                shipSize = 3
-                break
-            case 3:
-                shipSize = 2
-                break
-            case 4:
-                shipSize = 3
-                break
-            case 5:
-                shipSize = 5
-                break
-            default:
-                break
+        moveIsWithinBounds (index, shipSize = 2) {
+            let extraLength = shipSize - 1
+            let result = {
+                yminus: false,
+                yplus: false,
+                xminus: false,
+                xplus: false
             }
-            let result = this.moveIsClearOfShips(this.moveIsWithinBounds(index, shipSize))
+            if ((index + (extraLength * 10) <= 99)) result.yplus = true
+            if ((index - (extraLength * 10) >= 0)) result.yminus = true
+            if ((Math.floor((index) / 10)) === (Math.floor((index + extraLength) / 10))) result.xplus = true
+            if ((Math.floor((index) / 10)) === (Math.floor((index - extraLength) / 10))) result.xminus = true
 
             return result
         }
+
+        // visual feedback
+        // draw placed ships
     }
 }
 </script>
