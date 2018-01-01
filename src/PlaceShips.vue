@@ -116,11 +116,9 @@ export default {
             if (selectedShip === 0) return
 
             if (!this.isCurrentlyPlacingShip) {
-                console.log('ping')
                 this.startShipPlacement(index, selectedShip)
                 this.isCurrentlyPlacingShip = true
             } else {
-                console.log('pong')
                 this.finishShipPlacement(index, selectedShip)
                 this.isCurrentlyPlacingShip = false
             }
@@ -189,18 +187,29 @@ export default {
             if (yminus) {
                 let endNode = index - (10 * extraLength)
                 this.moveEndNodes.yminus = endNode
+            } else {
+                this.moveEndNodes.yminus = null
             }
+
             if (yplus) {
                 let endNode = index + (10 * extraLength)
                 this.moveEndNodes.yplus = endNode
+            } else {
+                this.moveEndNodes.yplus = null
             }
+
             if (xminus) {
                 let endNode = index - extraLength
                 this.moveEndNodes.xminus = endNode
+            } else {
+                this.moveEndNodes.xminus = null
             }
+
             if (xplus) {
                 let endNode = index + extraLength
                 this.moveEndNodes.xplus = endNode
+            } else {
+                this.moveEndNodes.xplus = null
             }
         },
 
@@ -233,8 +242,6 @@ export default {
             if (yminus) {
                 for (let i = 0; i < shipSize; i++) {
                     let p = this.panels[index - (10 * i)].IsOccupied
-                    console.log('hi')
-                    console.log(this.panels[i - (10 * i)])
                     if (p) yminus = false
                 }
             }
@@ -283,6 +290,15 @@ export default {
 
         // visual feedback
         // draw placed ships
+    },
+    watch: {
+        shipPlacements () {
+            for (var i = 0; i < this.shipPlacements.length; i++) {
+                for (var j = 0; j < this.shipPlacements[i].length; j++) {
+                    this.panels[j].OccupationType = i + 1 // array indices are one behind the occupation types
+                }
+            }
+        }
     }
 }
 </script>
