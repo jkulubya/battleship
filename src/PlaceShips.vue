@@ -69,7 +69,9 @@
                 <div class="tile"
                     @click="tileClicked(getPanelIndex(panel.Coordinates.x, panel.Coordinates.y))"
                     v-for="panel in panels"
-                    :key="getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)">
+                    :key="getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)"
+                    v-bind:class="{ occupied: panel.IsOccupied }"
+                    >
                     {{getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)}}
                 </div>
             </div>
@@ -372,6 +374,10 @@ export default {
 
         &.miss {
             background: forestgreen;
+        }
+
+        &.occupied {
+            background: pink;
         }
     }
 </style>
