@@ -295,7 +295,8 @@ export default {
         shipPlacements () {
             for (var i = 0; i < this.shipPlacements.length; i++) {
                 for (var j = 0; j < this.shipPlacements[i].length; j++) {
-                    this.panels[j].OccupationType = i + 1 // array indices are one behind the occupation types
+                    let targetIndex = this.shipPlacements[i][j]
+                    this.panels[targetIndex].OccupationType = i + 1 // array indices are one behind the occupation types
                 }
             }
         }
