@@ -1,6 +1,6 @@
-# battleship
+# Battleship
 
-> A Vue.js project
+An implementation of the classic game [Battleship](https://en.wikipedia.org/wiki/Battleship_(game)) in Vue.js
 
 ## Build Setup
 
@@ -25,3 +25,8 @@ npm test
 ```
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+
+## Contact
+
+Find me [@jkulubya](https://twitter.com/jkulubya)
