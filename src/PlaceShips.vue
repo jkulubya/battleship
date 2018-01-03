@@ -70,7 +70,9 @@
                     @click="tileClicked(getPanelIndex(panel.Coordinates.x, panel.Coordinates.y))"
                     v-for="panel in panels"
                     :key="getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)"
-                    v-bind:class="{ occupied: panel.IsOccupied }"
+                    v-bind:class="{ 
+                        occupied: panel.IsOccupied,
+                        possibleShipTail: panelIsPossibleShipTail(getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)) }"
                     >
                     {{getPanelIndex(panel.Coordinates.x, panel.Coordinates.y)}}
                 </div>
@@ -96,12 +98,12 @@ export default {
     data () {
         return {
             isCurrentlyPlacingShip: false,
-            shipStartPosition: Number(),
+            shipStartPosition: null,
             moveEndNodes: {
-                yminus: 0,
-                yplus: 0,
-                xminus: 0,
-                xplus: 0
+                yminus: null,
+                yplus: null,
+                xminus: null,
+                xplus: null
             },
             selectedShip: 0,
             shipPlacements: [[], [], [], [], []]
@@ -173,7 +175,7 @@ export default {
 
             // shipType-1 because ships start at 1 but arrays start at 0
             Vue.set(this.shipPlacements, shipType - 1, shipSquares) // eslint-disable-line
-            // draw ships
+            this.shipStartPosition = null
         },
 
         getValidMoves (index, shipType) {
@@ -288,6 +290,15 @@ export default {
             if ((Math.floor((index) / 10)) === (Math.floor((index - extraLength) / 10))) result.xminus = true
 
             return result
+        },
+
+        panelIsPossibleShipTail (index) {
+            return this.isCurrentlyPlacingShip && (
+                this.moveEndNodes.yminus === index ||
+                this.moveEndNodes.yplus === index ||
+                this.moveEndNodes.xminus === index ||
+                this.moveEndNodes.xplus === index
+            )
         }
 
         // visual feedback
@@ -295,6 +306,10 @@ export default {
     },
     watch: {
         shipPlacements () {
+            for (let n = 0; n < this.panels.length; n++) {
+                this.panels[n].OccupationType = 0
+            }
+
             for (var i = 0; i < this.shipPlacements.length; i++) {
                 for (var j = 0; j < this.shipPlacements[i].length; j++) {
                     let targetIndex = this.shipPlacements[i][j]
@@ -378,6 +393,10 @@ export default {
 
         &.occupied {
             background: pink;
+        }
+
+        &.possibleShipTail {
+            background: yellow;
         }
     }
 </style>
